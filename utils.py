@@ -91,7 +91,7 @@ def plot_average_weight_on_ground_truth(data, B):
     plt.legend()
 
 
-def plot_belief_expectation(data, B, items, R_dict=None):
+def plot_belief_expectation(data, B, items, R_dict=None, suppress_legend=False):
     query_num = data[0]['query_num'].astype(np.int)
     colors = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
@@ -110,7 +110,9 @@ def plot_belief_expectation(data, B, items, R_dict=None):
         plt.title("expectation of belief distributions, B={}, run={}".format(B[0], run))
         plt.xlabel('query')
         plt.ylabel('reward value')
-        plt.legend()
+
+        if not suppress_legend:
+            plt.legend()
         plt.show()
 
 
@@ -147,17 +149,17 @@ class CSVLogger():
             "teacher_beta": beta,
             "query": query[0].name + "; " + query[1].name,
             "feedback_likelihood": feedback_likelihood,
-            "truth_weights": truth_weights,
-            "truth_weights_chng": self.convert_truth_weights_chng_to_string_manually_please(truth_weights_chng),
-            "expectations": np.asarray(expectations).copy()
+            "truth_weights": self.convert_np_array_to_string_manually_please(truth_weights),
+            "truth_weights_chng": self.convert_np_array_to_string_manually_please(truth_weights_chng),
+            "expectations": self.convert_np_array_to_string_manually_please(np.asarray(expectations).copy())
         }
         self.eval_data.append(record.copy())
 
-    # convert truth_weights_chng array to string in normal np.tostring format with NO NEWLINES
-    def convert_truth_weights_chng_to_string_manually_please(self, truth_weights_chng):
-        s = "["  + str(truth_weights_chng[0])
-        if len(truth_weights_chng) > 1:
-            for e in truth_weights_chng[1:]:
+    # convert numpy array to string in normal np.tostring format with NO NEWLINES
+    def convert_np_array_to_string_manually_please(self, array):
+        s = "["  + str(array[0])
+        if len(array) > 1:
+            for e in array[1:]:
                 s += " " + str(e)
         s += "]"
         return s
